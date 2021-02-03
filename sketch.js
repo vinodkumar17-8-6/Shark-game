@@ -55,6 +55,12 @@ function preload() {
   heartImage = loadImage("heart.png");
 
   backgroundImage2 = loadImage("gameover.png");
+  backgroundImage3 = loadImage("win.png");
+
+  music = loadSound("music.mp3");
+  bgMp3 = loadSound("bg.mp3");
+  bite = loadSound("bite.mp3");
+  gameover = loadSound("gameover.wav");
 
 }
 
@@ -103,148 +109,187 @@ function setup() {
 
 function draw() {
 
-  if (gameState===0){
+  if (gameState === 0) {
 
-  background.velocityX = 5;
+    background.velocityX = 5;
 
-  if (background.x >= 800) {
-    background.x = background.width / 3;
+    if (background.x >= 800) {
+      background.x = background.width / 3;
+    }
+
+    if (keyDown(UP_ARROW)) {
+      shark.velocityY = -3;
+      shark.velocityX = 0;
+    }
+
+    if (keyDown(DOWN_ARROW)) {
+      shark.velocityY = 3;
+      shark.velocityX = 0;
+    }
+
+    if (keyDown(RIGHT_ARROW)) {
+      shark.velocityX = 3;
+      shark.velocityY = 0;
+    }
+
+    if (keyDown(LEFT_ARROW)) {
+      shark.velocityX = -3;
+      shark.velocityY = 0;
+    }
+
+    if (keyWentUp(UP_ARROW)) {
+      shark.velocityX = 0;
+      shark.velocityY = 0;
+    }
+    if (keyWentUp(DOWN_ARROW)) {
+      shark.velocityX = 0;
+      shark.velocityY = 0;
+    }
+
+    if (keyWentUp(LEFT_ARROW)) {
+      shark.velocityX = 0;
+      shark.velocityY = 0;
+    }
+
+    if (keyWentUp(RIGHT_ARROW)) {
+      shark.velocityX = 0;
+      shark.velocityY = 0;
+    }
+
+    if (foodsGroup.isTouching(shark)) {
+      score += 1;
+      foodsGroup.destroyEach();
+      bite.play();
+    }
+
+    if (foods1Group.isTouching(shark)) {
+      score += 2;
+      foods1Group.destroyEach();
+      bite.play();
+    }
+
+    if (foods2Group.isTouching(shark)) {
+      score += 3;
+      foods2Group.destroyEach();
+      bite.play();
+    }
+
+    if (foods3Group.isTouching(shark)) {
+      score += 4;
+      foods3Group.destroyEach();
+      bite.play();
+    }
+
+    if (foods4Group.isTouching(shark)) {
+      score += 5;
+      foods4Group.destroyEach();
+      bite.play();
+    }
+
+    if (shark.isTouching(knifesGroup)) {
+      knifesGroup.destroyEach();
+      diversGroup.destroyEach();
+      shark.x = 800, 250;
+      HP = HP - 1
+    }
+
+    if (shark.y < 0) {
+      shark.y = 0;
+    }
+
+    if (shark.y > 450) {
+      shark.y = 450;
+    }
+
+    food();
+    food1();
+    food2();
+    food3();
+    food4();
+
+    art1();
+    art2();
+    art3();
+    art4();
+    art5();
+
+    spawnDivers();
+
+    if (HP === 0) {
+      gameState = 1;
+      gameover.play();
+    }
+
+    if (score === 100) {
+      gameState = 2;
+    }
+
+    drawSprites();
+
   }
 
-  if (keyDown(UP_ARROW)) {
-    shark.velocityY = -3;
-    shark.velocityX = 0;
-  }
+  if (gameState === 1) {
 
-  if (keyDown(DOWN_ARROW)) {
-    shark.velocityY = 3;
-    shark.velocityX = 0;
-  }
+    background.destroy();
+    ground.destroy();
 
-  if (keyDown(RIGHT_ARROW)) {
-    shark.velocityX = 3;
-    shark.velocityY = 0;
-  }
-
-  if (keyDown(LEFT_ARROW)) {
-    shark.velocityX = -3;
-    shark.velocityY = 0;
-  }
-
-  if (keyWentUp(UP_ARROW)) {
-    shark.velocityX = 0;
-    shark.velocityY = 0;
-  }
-  if (keyWentUp(DOWN_ARROW)) {
-    shark.velocityX = 0;
-    shark.velocityY = 0;
-  }
-
-  if (keyWentUp(LEFT_ARROW)) {
-    shark.velocityX = 0;
-    shark.velocityY = 0;
-  }
-
-  if (keyWentUp(RIGHT_ARROW)) {
-    shark.velocityX = 0;
-    shark.velocityY = 0;
-  }
-
-  if (foodsGroup.isTouching(shark)) {
-    score += 1;
-    foodsGroup.destroyEach();
-  }
-
-  if (foods1Group.isTouching(shark)) {
-    score += 2;
-    foods1Group.destroyEach();
-  }
-
-  if (foods2Group.isTouching(shark)) {
-    score += 3;
-    foods2Group.destroyEach();
-  }
-
-  if (foods3Group.isTouching(shark)) {
-    score += 4;
-    foods3Group.destroyEach();
-  }
-
-  if (foods4Group.isTouching(shark)) {
-    score += 5;
-    foods4Group.destroyEach();
-  }
-
-  if (shark.isTouching(knifesGroup)) {
-    knifesGroup.destroyEach();
-    diversGroup.destroyEach();
-    shark.x = 800,250;
-    HP = HP - 1
-  }
-
-  if (shark.y<0){
-    shark.y=0;
-  }
-
-  if (shark.y>450){
-    shark.y = 450;
-  }
-
-  if(HP===4){
-    gameState=1;
-  }
-
-  }
-
-  if (gameState===1){
-
-    // background.velocity.x = 0;
-    background = createSprite(750,250);
+    background.velocity.x = 0;
+    background = createSprite(750, 250);
     background.addImage(backgroundImage2);
     background.scale = 1.5;
 
+    foodsGroup.destroyEach();
+    foods1Group.destroyEach();
+    foods2Group.destroyEach();
+    foods3Group.destroyEach();
+    foods4Group.destroyEach();
+
+    arts1Group.destroyEach();
+    arts2Group.destroyEach();
+    arts3Group.destroyEach();
+    arts4Group.destroyEach();
+    arts5Group.destroyEach();
+
+    knifesGroup.destroyEach();
+    diversGroup.destroyEach();
+
+
+    drawSprites();
+
+
+  }
+
+  if (gameState === 2) {
+
+    background.destroy();
+    ground.destroy();
+
+    background.velocity.x = 0;
+    background = createSprite(750, 250);
+    background.addImage(backgroundImage3);
+    background.scale = 3;
+
+    foodsGroup.destroyEach();
+    foods1Group.destroyEach();
+    foods2Group.destroyEach();
+    foods3Group.destroyEach();
+    foods4Group.destroyEach();
+
+    arts1Group.destroyEach();
+    arts2Group.destroyEach();
+    arts3Group.destroyEach();
+    arts4Group.destroyEach();
+    arts5Group.destroyEach();
+
+    knifesGroup.destroyEach();
+    diversGroup.destroyEach();
+
+    drawSprites();
+
+
   }
 
 
-  // if (HP===5){
-
-  //   shark.destroy();
-  //   knifesGroup.destroyEach();
-  //   diversGroup.destroyEach();
-      
-  //   foodsGroup.destroyEach();
-  //   foods1Group.destroyEach();
-  //   foods2Group.destroyEach();
-  //   foods3Group.destroyEach();
-  //   foods4Group.destroyEach();
-
-  //   arts1Group.destroyEach();
-  //   arts2Group.destroyEach();
-  //   arts3Group.destroyEach();
-  //   arts4Group.destroyEach();
-  //   arts5Group.destroyEach();
-  //   ground.destroy();
-
-    
-  // }
-  
-  
-  food();
-  food1();
-  food2();
-  food3();
-  food4();
-
-  art1();
-  art2();
-  art3();
-  art4();
-  art5();
-
-  spawnDivers();
-
-  drawSprites();
-  
   fill(109, 44, 184);
   textSize(30);
   text("SCORE :- " + score, 1000, 50);
@@ -258,13 +303,13 @@ function draw() {
 
 function spawnDivers() {
 
-  if (frameCount % 450 === 0) {
+  if (frameCount % 350 === 0) {
 
     var diver = createSprite(1600, 200, 1, 1);
-    diver.y = random(150, 300);
+    diver.y = random(200, 300);
     diver.addImage(diver_diving);
     diver.scale = 0.5;
-    diver.velocityX = -3.2;
+    diver.velocityX = random(-5, -8);
     diver.lifeTime = 150;
 
     var knife = createSprite(1195, 225, 10, 10);
@@ -274,7 +319,7 @@ function spawnDivers() {
     knife.scale = 0.15;
     knife.velocityX = diver.velocityX;
     knife.lifeTime = 150;
-  
+
     knifesGroup.add(knife);
     diversGroup.add(diver);
 
